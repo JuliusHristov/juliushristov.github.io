@@ -54,7 +54,7 @@
   .detail{border:1px solid #cedee0;border-radius:15px;background:#fff;box-shadow:var(--shadow);padding:26px 30px 27px;scroll-margin-top:20px;min-height:310px}
   .detail-top{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;align-items:center}.section-tag{font-size:11px;text-transform:uppercase;letter-spacing:.11em;font-weight:850;color:var(--teal)}
   .details h2{margin:12px 0 10px;font-size:31px}.details .summary{max-width:850px;font-size:15px;line-height:1.7;color:#405460;margin:0 0 20px}
-  .equation{padding:16px 20px;background:#f1f7f7;border:1px solid #dfebeb;border-radius:9px;font:19px Georgia,"Times New Roman",serif;overflow-x:auto;white-space:nowrap;color:#1c4754;margin:16px 0}
+  .equation{padding:16px 20px;background:#f1f7f7;border:1px solid #dfebeb;border-radius:9px;font:19px Georgia,"Times New Roman",serif;overflow-x:auto;white-space:normal;color:#1c4754;margin:16px 0}
   .detailgrid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:23px}.detailcol{border-top:1px solid var(--line);padding-top:13px}.detailcol h3{font-size:17px;margin:0 0 9px}.detailcol ul{margin:0;padding-left:19px;color:#465d67;font-size:13.5px}.detailcol li{margin-bottom:6px}
   .depbuttons{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0 16px}.depbutton{cursor:pointer;background:#f2f6f6;border:1px solid #d8e3e4;padding:6px 10px;border-radius:5px;color:#235667;font-size:12px;font-weight:700}
   .deps-label{font-size:12px;font-weight:800;margin-top:19px;color:#5d717b}.detail-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:23px}.detail-actions a,.detail-actions button{background:#163d4d;border:1px solid #163d4d;border-radius:7px;color:#fff;padding:10px 13px;text-decoration:none;font:700 12px system-ui;cursor:pointer}.detail-actions .secondary{color:#275464;background:#fff;border-color:#b9d1d3}
@@ -65,6 +65,16 @@
   @media(max-width:600px){.wrap{padding:0 18px}.topinner{align-items:flex-start;flex-direction:column;padding:15px 0}.topnav{gap:12px}.topnav a{font-size:12px}.hero h1{font-size:39px}.hero p{font-size:15px}.detail{padding:20px}.details h2{font-size:25px}.equation{font-size:16px}}
   @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.node,.btn,.btn-outline{transition:none}}
 </style>
+<!-- MathJax 3 for consistently formatted mathematical expressions -->
+<script>
+window.MathJax = {
+  tex: {inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']], processEscapes: true},
+  options: {skipHtmlTags: ['script','noscript','style','textarea','pre','code']},
+  startup: {typeset: true}
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
 </head>
 <body>
 <header class="topbar"><div class="wrap topinner">
@@ -123,6 +133,21 @@ const nodes=[
 {id:'os',category:'measure',chap:'Chapter 16',name:'OS reflection positivity',sub:'Schwinger functions, clustering and Hilbert-space reconstruction',kind:'Quantum field reconstruction',deps:['measure','flat'],description:'Uses the positive Gaussian covariance to formulate Schwinger distributions, reflection positivity and Osterwalder–Schrader reconstruction. The reconstructed generalized free planar field carries a spectrum determined by the physical mass operator.',formula:'𝒞E = (−Δℝ⁴ + 𝓜²)⁻¹;   ℋOS ≃ Γs(ℋphys¹)',provides:['A reconstructed positive-energy Hilbert-space theory, given the prior assumptions.','A route from spectral positivity to a positive-energy gap.'],checks:['Are the OS axioms demonstrated for the stated test-function space?','Does the reconstructed theory inherit the claimed YM identification rather than only geometric covariance?'],refs:'§§16.50–16.60'},
 {id:'main',category:'measure',chap:'Chapter 16',name:'Existence and mass gap claim',sub:'Final theorem and identification with planar SU(N) Yang–Mills',kind:'Main claimed result — conditional on correspondence',deps:['os','collective','flat'],description:'Assembles the proposed Yang–Mills FMR/collective identification, strict-planar Gaussian measure, flat-space spectral gap and OS reconstruction. The manuscript explicitly conditions its final result on the planar FMR–master-field identification developed earlier.',formula:'spec(H) ⊂ {0} ∪ [Mgap, ∞),   Mgap > 0',provides:['The manuscript’s final planar existence-and-mass-gap claim.','A central point of independent mathematical scrutiny.'],checks:['Does the geometric model represent the actual strict-planar Yang–Mills theory?','Are all prerequisites established on the domains used by the concluding theorem?'],refs:'§§16.59–16.60'}
 ];
+const formulaTeX={
+  fmr:String.raw`A\longmapsto[A]\in\mathcal A/\mathcal G\qquad\text{(physical horizontal metric)}`,
+  fuzzy:String.raw`\mathrm{Mat}_N\longrightarrow C^{\infty}(S^2),\qquad\frac{[\cdot,\cdot]}{i\hbar_N}\longrightarrow\{\cdot,\cdot\}_{S^2}`,
+  periods:String.raw`-\frac{d}{d\tau}\!\left[p(\tau)\frac{dh}{d\tau}\right]=S(u(\tau)),\quad p(\tau)=(\sinh2\tau-2\tau)^{2/3}`,
+  complex:String.raw`\Psi\in\ker\partial\cap\Omega^{2,1}(X),\qquad K_h=G_{1,h}^{-1}\bar\partial^\dagger G_{2,0}\bar\partial`,
+  collective:String.raw`\mathcal C_{\infty}(F_{\mathrm{YM}})=\bar\partial\Psi+\tfrac12[\Psi,\Psi]_{\Omega}`,
+  strings:String.raw`\widehat{\mathcal A}=\mathcal A\otimes\Omega^\bullet(\mathbb R_t),\qquad \widehat Q=Q+d_t`,
+  spectra:String.raw`K_h\Psi_{n,I}=M_{n,I}^{2}\Psi_{n,I}`,
+  compact:String.raw`\operatorname{spec}\!\left(K_h\big|_{\mathcal H_{\mathrm{phys}}}\right)\subset[M_{\mathrm{gap}}^2,\infty),\quad M_{\mathrm{gap}}>0`,
+  measure:String.raw`\begin{aligned}\mathcal C_E&=(-\partial_{t_E}^{2}+K_h)^{-1},\\ \frac{Z_{\infty}[J]}{Z_{\infty}[0]}&=\exp\!\left(\tfrac12\langle J,\mathcal C_E J\rangle\right)\end{aligned}`,
+  source:String.raw`\langle\mathcal O(p)\mathcal O(-p)\rangle\quad\longleftrightarrow\quad\text{spectral poles and residues}`,
+  flat:String.raw`\mathcal M_0^2\propto\widehat K_0,\qquad\widehat K_0=G_{1,0}^{-1}\bar\partial^*G_{2,0}\bar\partial`,
+  os:String.raw`\begin{aligned}\mathcal C_E&=(-\Delta_{\mathbb R^4}+\mathcal M^2)^{-1},\\ \mathcal H_{\mathrm{OS}}&\simeq\Gamma_s(\mathcal H_{\mathrm{phys}}^{(1)})\end{aligned}`,
+  main:String.raw`\operatorname{spec}(H)\subset\{0\}\cup[M_{\mathrm{gap}},\infty),\qquad M_{\mathrm{gap}}>0`
+};
 const byId=Object.fromEntries(nodes.map(n=>[n.id,n]));
 const cols=document.getElementById('columns'),detail=document.getElementById('detail'),search=document.getElementById('search'),counter=document.getElementById('counter'),empty=document.getElementById('empty');
 let selected='collective',filter='all';
@@ -133,11 +158,12 @@ function renderMap(){const q=search.value.trim().toLocaleLowerCase();let visible
  cols.querySelectorAll('button[data-id]').forEach(b=>b.addEventListener('click',()=>select(b.dataset.id,true)));
 }
 function select(id,scroll){if(!byId[id])return;selected=id;renderMap();renderDetails();if(scroll)detail.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});}
-function renderDetails(){const n=byId[selected];const dependents=nodes.filter(x=>x.deps.includes(selected));
+function renderDetails(){if(window.MathJax?.typesetClear){MathJax.typesetClear([detail]);}const n=byId[selected];const dependents=nodes.filter(x=>x.deps.includes(selected));
  const dephtml=n.deps.length?n.deps.map(id=>'<button class="depbutton" data-jump="'+id+'">'+esc(byId[id].name)+'</button>').join(''):'<span class="muted">Foundational input: no preceding roadmap node.</span>';
  const aft=dependents.length?dependents.map(x=>'<button class="depbutton" data-jump="'+x.id+'">'+esc(x.name)+'</button>').join(''):'<span class="muted">No later node depends directly on this step.</span>';
- detail.innerHTML='<div class="details"><div class="detail-top"><span class="section-tag">'+esc(n.chap)+' · '+esc(n.kind)+'</span><span class="muted">Reference: '+esc(n.refs)+'</span></div><h2>'+esc(n.name)+'</h2><p class="summary">'+esc(n.description)+'</p>'+(selected==='periods'?'<figure class="rg-figure"><a href="rg-conifold.png" target="_blank" rel="noopener" title="Open full-resolution RG and conifold illustration"><img src="rg-conifold.png" alt="Schematic illustration of RG-completed deformed conifold geometry: radial scale tau runs from a wide UV conical region down to a smooth IR cap, with period-derived warp-Riesz weight h(tau) and a discrete glueball mass spectrum" loading="eager"></a><figcaption><strong>Illustrative RG picture.</strong> Click to enlarge. The drawing is schematic, not a literal embedding of the six-dimensional Stenzel metric; the UV link has topology S³ × S², not a product metric.</figcaption></figure>':'')+'<div class="equation" aria-label="Key formula">'+esc(n.formula)+'</div><div class="detailgrid"><div class="detailcol"><h3>What this step supplies</h3><ul>'+n.provides.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div><div class="detailcol"><h3>What a reader should verify</h3><ul>'+n.checks.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div></div><div class="deps-label">DIRECT INPUTS</div><div class="depbuttons">'+dephtml+'</div><div class="deps-label">STEPS USING THIS RESULT</div><div class="depbuttons">'+aft+'</div><div class="detail-actions"><a href="manuscript.pdf" target="_blank" rel="noopener">Open manuscript PDF ↗</a><a class="secondary" href="https://doi.org/10.5281/zenodo.23601485" target="_blank" rel="noopener">Archival DOI ↗</a><button class="secondary" id="copyref" type="button">Copy chapter reference</button></div></div>';
+ detail.innerHTML='<div class="details"><div class="detail-top"><span class="section-tag">'+esc(n.chap)+' · '+esc(n.kind)+'</span><span class="muted">Reference: '+esc(n.refs)+'</span></div><h2>'+esc(n.name)+'</h2><p class="summary">'+esc(n.description)+'</p>'+(selected==='periods'?'<figure class="rg-figure"><a href="rg-conifold.png" target="_blank" rel="noopener" title="Open full-resolution RG and conifold illustration"><img src="rg-conifold.png" alt="Schematic illustration of RG-completed deformed conifold geometry: radial scale tau runs from a wide UV conical region down to a smooth IR cap, with period-derived warp-Riesz weight h(tau) and a discrete glueball mass spectrum" loading="eager"></a><figcaption><strong>Illustrative RG picture.</strong> Click to enlarge. The drawing is schematic, not a literal embedding of the six-dimensional Stenzel metric; the UV link has topology S³ × S², not a product metric.</figcaption></figure>':'')+'<div class="equation" aria-label="Key formula">'+String.raw`\[${formulaTeX[n.id]}\]`+'</div><div class="detailgrid"><div class="detailcol"><h3>What this step supplies</h3><ul>'+n.provides.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div><div class="detailcol"><h3>What a reader should verify</h3><ul>'+n.checks.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></div></div><div class="deps-label">DIRECT INPUTS</div><div class="depbuttons">'+dephtml+'</div><div class="deps-label">STEPS USING THIS RESULT</div><div class="depbuttons">'+aft+'</div><div class="detail-actions"><a href="manuscript.pdf" target="_blank" rel="noopener">Open manuscript PDF ↗</a><a class="secondary" href="https://doi.org/10.5281/zenodo.23601485" target="_blank" rel="noopener">Archival DOI ↗</a><button class="secondary" id="copyref" type="button">Copy chapter reference</button></div></div>';
  detail.querySelectorAll('[data-jump]').forEach(b=>b.addEventListener('click',()=>{search.value='';filter='all';document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.filter==='all')));select(b.dataset.jump,true)}));
+ if(window.MathJax?.typesetPromise){MathJax.typesetPromise([detail]).catch(err=>console.warn('MathJax rendering:',err));}
  document.getElementById('copyref').addEventListener('click',async()=>{const t='Hristov, J. (2026). Existence and Mass Gap in Planar SU(N) Yang–Mills Theory on S³ × ℝ and ℝ⁴. '+n.chap+', '+n.refs+'. DOI: 10.5281/zenodo.23601485';try{await navigator.clipboard.writeText(t);document.getElementById('copyref').textContent='Copied ✓'}catch(e){window.prompt('Copy reference:',t)}});
 }
 search.addEventListener('input',renderMap);
