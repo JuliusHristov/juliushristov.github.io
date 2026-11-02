@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Primitive scalar-singlet spectrum of a proposed planar Yang–Mills master-field construction, numerical solver, and independent large-N lattice comparison.">
+<meta name="description" content="Interactive primitive 0++ and Lefschetz 0-+ glueball spectra, numerical reproductions, and comparison to continuum large-N lattice Yang–Mills, with reproducible Python scripts.">
 <meta name="citation_doi" content="10.5281/zenodo.23601485">
-<title>Scalar 0++ Spectrum | Yang–Mills Master Field</title>
+<title>Scalar Glueball Spectra: 0++ & 0−+ | Yang–Mills Master Field</title>
 <style>
 :root{--navy:#153449;--ink:#203544;--mute:#59707a;--teal:#15727d;--gold:#bc9251;--border:#dbe5e7;--paper:#fff;--bg:#f8faf9;--pale:#edf5f5}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 system-ui,-apple-system,'Segoe UI',sans-serif}a{color:var(--teal);text-underline-offset:3px}
@@ -18,6 +18,27 @@ main{padding:45px 0 65px}.lede{max-width:920px;color:#4b626d}.notice{background:
 .legend{display:flex;gap:24px;flex-wrap:wrap;color:#556e79;font-size:13px}.swatch{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:middle;margin-right:7px}.small{font-size:13px;color:var(--mute)}.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;min-width:630px}th,td{padding:12px 14px;text-align:left;border-bottom:1px solid #e6edef}th{background:#f0f6f6;font-size:12px;color:#47616e}td{font-size:14px}tr:hover td{background:#fafdfd}td:first-child{font-weight:750}.footnotes{font-size:12px;color:#687980;margin-top:10px}
 .math{font:17px Georgia,serif;overflow-x:auto;overflow-y:hidden;padding:15px;background:#f2f7f7;border:1px solid #e0e9e9;border-radius:8px;color:#234550}.cols{display:grid;grid-template-columns:1fr 1fr;gap:23px}.cols p{color:#4d626d}.code{background:#153449;color:#e7f2f4;border-radius:9px;padding:17px 19px;overflow-x:auto;font:13px/1.8 ui-monospace,Consolas,monospace}.source{background:#f8faf9;border:1px solid var(--border);border-radius:8px;padding:16px 18px}.source p{margin:5px 0;font-size:13px}.tag{background:#e5f4f2;color:#1a6570;padding:5px 8px;border-radius:6px;font-weight:800;font-size:11px}.footer{background:#183543;padding:25px 0;color:#dce8ec;font-size:13px}.footer a{color:white}
 @media(max-width:800px){.metrics{grid-template-columns:1fr}.cols{grid-template-columns:1fr}.card{padding:18px}.checkbox{margin-left:0}.hero{padding:45px 0}.wrap{width:min(1120px,calc(100% - 28px))}}
+
+/* Added spectrum and ground-state-ratio widgets */
+#lefschetzPlot,#ratioPlot{width:100%;height:auto;min-width:590px;display:block}
+#lefschetzPlot text,#ratioPlot text{font:12px system-ui,-apple-system,'Segoe UI',sans-serif;fill:#566b75}
+#lefschetzPlot .charttitle,#ratioPlot .charttitle{font-size:14px;font-weight:750;fill:#203544}
+.compare-strip{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:20px 0}
+.compare-item{background:#f0f7f7;border:1px solid var(--border);border-radius:10px;padding:18px}
+.compare-item small{display:block;color:#576d78;font-weight:800}
+.compare-item strong{display:block;font:700 clamp(26px,4.2vw,42px) Georgia,serif;margin:8px 0;color:#153449;font-variant-numeric:tabular-nums}
+.compare-item p{margin:0;font-size:13px;color:var(--mute)}
+.ratio-feature{padding:22px;background:linear-gradient(105deg,#123346,#194959);border-radius:12px;text-align:center;color:white;margin:20px 0}
+.ratio-feature .math{margin:10px 0;background:transparent;color:white;border:0;font-size:clamp(17px,2.3vw,25px);padding:8px}
+.ratio-feature .math mjx-container{color:white}
+.ratio-feature p{color:#deeaed;margin:0;font-size:14px}
+.ratio-feature strong{display:block;font:700 clamp(36px,6vw,58px) Georgia,serif;color:#f3c477;letter-spacing:-.025em}
+.inline-control{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0}
+.inline-control select{font:inherit;color:var(--navy);border:1px solid #cadadd;background:white;padding:8px 12px;border-radius:7px}
+.selected-mode{background:#f1f7f7;border:1px solid #d9e6e8;padding:14px 17px;border-radius:9px;line-height:1.6;margin-top:14px}
+.badge-accent{display:inline-block;padding:5px 9px;border-radius:6px;background:#e6f2f0;color:#146873;font-weight:800;font-size:12px}
+.chart-note{margin:6px 0 0;font-size:12px;color:var(--mute)}
+@media(max-width:760px){.compare-strip{grid-template-columns:1fr}.ratio-feature{padding:16px}}
 </style>
 <!-- MathJax 3 for consistently formatted mathematical expressions -->
 <script>
@@ -32,11 +53,11 @@ window.MathJax = {
 </head>
 <body>
 <div class="bar"><div class="wrap top"><a class="brand" href="index.html">Planar Yang–Mills Master Field</a><nav class="nav"><a href="index.html">Home</a><a href="roadmap.html">Proof roadmap</a><a href="spectrum.html" aria-current="page">Scalar spectrum</a><a href="manuscript.pdf">Manuscript</a></nav></div></div>
-<header class="hero"><div class="wrap"><div class="eyebrow">Research calculations · Primitive scalar singlet · 0<sup>++</sup> candidate</div><h1>The scalar-singlet spectrum</h1><p>A reproducible spectral calculation from the constrained Dolbeault master-field operator, compared with continuum large-<i>N</i> lattice Yang–Mills data.</p><div class="pills"><a class="btn primary" href="scripts/solve_primitive.py">View numerical solver</a><a class="btn" href="scalar_spectrum_comparison.png">View static figure</a><a class="btn" href="https://doi.org/10.5281/zenodo.23601485">Manuscript DOI</a></div></div></header>
+<header class="hero"><div class="wrap"><div class="eyebrow">Research calculations · Primitive 0<sup>++</sup> and Lefschetz 0<sup>−+</sup> singlets</div><h1>Scalar and pseudoscalar glueball spectra</h1><p>Interactive primitive and Lefschetz spectral towers from the constrained Dolbeault master-field construction, compared with continuum large-<i>N</i> lattice Yang–Mills data.</p><div class="pills"><a class="btn primary" href="scripts/solve_primitive.py">View numerical solver</a><a class="btn" href="scalar_spectrum_comparison.png">View static figure</a><a class="btn" href="https://doi.org/10.5281/zenodo.23601485">Manuscript DOI</a></div></div></header>
 <main class="wrap">
-<div class="notice"><b>Interpretation and status.</b> These are the primitive <i>SO(4)</i>-singlet eigenvalues reported in the manuscript and reproduced approximately by the accompanying Galerkin code. Their identification with physical planar Yang–Mills glueballs depends on the proposed master-field correspondence. The manuscript is not peer reviewed. The comparison below is therefore a quantitative test, not an independent validation of that correspondence.</div>
-<div class="metrics"><div class="metric"><small>Primitive ground-state eigenvalue c²₀</small><strong>0.4220071</strong><span>Dimensionless, from manuscript Ch. 3</span></div><div class="metric"><small>Predicted first radial mass ratio</small><strong>1.5663</strong><span>M₁/M₀ from primitive eigenvalues</span></div><div class="metric"><small>Large-N lattice first excited / ground</small><strong>1.9027</strong><span>≈ ±0.0184; Athenodorou–Teper 2021</span></div></div>
-<section class="card" id="comparison"><div class="heading"><div><h2>Interactive mass-spectrum comparison</h2><p class="small">All masses are normalized to the ground state of their own spectrum, eliminating an arbitrary overall mass scale.</p></div><span class="tag">N → ∞ lattice</span></div>
+<div class="notice"><b>Identification adopted in this work:</b> The <b>primitive scalar-singlet tower is assigned to the \(0^{++}\) glueball sector</b>, and the <b>Lefschetz scalar-singlet tower is assigned to the \(0^{-+}\) glueball sector</b>. This is the physical interpretation proposed in the manuscript; the full \(J^{PC}\) assignment requires more than \(SO(4)\) singlet symmetry alone. The manuscript has not undergone external peer review. Lattice comparisons test the proposal but do not establish the collective-field identification.</div>
+<div class="metrics"><div class="metric"><small>Primitive ground-state eigenvalue \(c_{P,0}^{2}\)</small><strong>0.4220071</strong><span>Dimensionless, from manuscript Ch. 3</span></div><div class="metric"><small>Predicted first radial mass ratio</small><strong>1.5663</strong><span>M₁/M₀ from primitive eigenvalues</span></div><div class="metric"><small>Large-N lattice first excited / ground</small><strong>1.9027</strong><span>≈ ±0.0184; Athenodorou–Teper 2021</span></div></div>
+<section class="card" id="comparison"><div class="heading"><div><h2>Primitive \(0^{++}\) — interactive mass-spectrum comparison</h2><p class="small">All masses are normalized to the ground state of their own spectrum, eliminating an arbitrary overall mass scale.</p></div><span class="tag">N → ∞ lattice</span></div>
 <div class="controls"><button class="ctrl" id="massToggle" aria-pressed="true" type="button">Mass ratios M/M₀</button><button class="ctrl" id="squareToggle" aria-pressed="false" type="button">Squared ratios M²/M₀²</button><label class="checkbox"><input id="latticeToggle" type="checkbox" checked> Show lattice points and uncertainty</label></div>
 <div class="chart-holder"><svg id="spectrumPlot" viewBox="0 0 950 385" role="img" aria-label="Interactive chart comparing the manuscript scalar radial mass ratios to large-N lattice 0++ ground and first excitation"></svg></div>
 <div class="legend"><span><i class="swatch" style="background:#147986"></i>Primitive scalar singlet (manuscript)</span><span><i class="swatch" style="background:#c39444"></i>Continuum large-N lattice 0++</span></div>
@@ -44,15 +65,50 @@ window.MathJax = {
 <p class="footnotes">Lattice input: M(0<sup>++</sup>)/√σ = 3.072(14), M(0<sup>++</sup> first excited)/√σ = 5.845(50), continuum N → ∞, Athenodorou &amp; Teper, JHEP 12 (2021) 082. Ratio error assumes independent errors and ignores covariance. No lattice matches are asserted for higher radial levels in this plot.</p>
 <div class="notice" style="margin-bottom:0"><b>Observed comparison:</b> the predicted first excited <i>0<sup>++</sup></i> mass ratio (1.566) is below the cited lattice value (1.903), by about 0.336. This discrepancy is visible and should be investigated; the overall mass normalization cannot remove it.</div>
 </section>
-<section class="card" id="method"><h2>Which operator is being diagonalized?</h2><div class="cols"><div><h3>Primitive-scalar radial reduction</h3><p>The constrained singlet is parameterized by one radial function <i>v(τ)</i>, with the second component fixed by the ∂-closedness condition.</p><div class="math">\[q[v]=\cosh(\tau)\,v+\frac12\sinh(\tau)\,v\prime\]</div><div class="math">\[D_Pv=v\prime\prime+4\coth(\tau)\,v\prime+4v\]</div><p>Manuscript Chapters 2–3, especially Eqs. (2.4)–(2.9) and (3.2)–(3.8).</p></div><div><h3>One-sided variational eigenproblem</h3><div class="math">\[c^{2}[v]=\frac{\frac14\int_0^\infty p(\tau)\sinh^{2}(\tau)\,|D_Pv|^{2}\,d\tau}{\int_0^\infty W(\tau)\bigl(|v|^{2}+2|q[v]|^{2}\bigr)\,d\tau}\]</div><div class="math">\[\begin{aligned}p(\tau)&=(\sinh 2\tau-2\tau)^{2/3},\\ W(\tau)&=\sinh^{2}(\tau)\frac{h(\tau)}{h(0)}\end{aligned}\]</div><p>The weight follows \(-\frac{d}{d\tau}(p(\tau)h\prime(\tau))=S(u(\tau))\), with regularity at \(\tau=0\) and decay at infinity.</p></div></div><p class="small"><b>Zero mode:</b> the analytic A-period zero mode has D<sub>P</sub>v<sub>A</sub> = 0 and is excluded by fixing the A-period. With finite-radius numerical boundary conditions it appears as a small near-zero eigenvalue, not as a physical glueball state.</p></section>
-<section class="card" id="lefschetz"><div class="heading"><h2>The second scalar-singlet block: Lefschetz</h2><span class="tag">Manuscript Chapters 4–5</span></div>
-<p>The <i>SO(4)</i>-singlet space decomposes into a primitive and a Lefschetz block. The latter obeys a separate second-order Sturm–Liouville problem, with the same normalized radial weight <i>W(τ)</i> but a different differential operator. It is not another eigenmode of the primitive tower.</p>
-<div class="math">\[\begin{aligned}D_Lf&=f\prime+\coth(\tau)f,\\ Q_L[f]&=\frac12\int_0^\infty p\left[|D_Lf|^2+\frac12\left(\frac{p\prime}{p}\right)^2|f|^2\right]d\tau,\\N_L[f]&=\int_0^\infty W|f|^2\,d\tau\end{aligned}\]</div>
-<div class="scroll"><table><thead><tr><th>Lefschetz mode</th><th>Manuscript c²</th><th>Independent Galerkin check c²</th></tr></thead><tbody>
-<tr><td>n = 0</td><td>0.9981</td><td>0.998088</td></tr><tr><td>n = 1</td><td>1.7792</td><td>1.778989</td></tr><tr><td>n = 2</td><td>2.7771</td><td>2.776341</td></tr><tr><td>n = 3</td><td>3.9935</td><td>3.991067</td></tr><tr><td>n = 4</td><td>5.4302</td><td>5.423880</td></tr>
-</tbody></table></div>
-<p>The lowest Lefschetz-to-primitive mass ratio is <b>\(\sqrt{0.9981/0.4220071}\approx1.538\)</b>. The large-<i>N</i> lattice <i>0<sup>−+</sup>/0<sup>++</sup></i> ground-state ratio, using 4.711(26) and 3.072(14) in units of √σ, is <b>1.534 ± 0.011</b> (uncorrelated-error approximation). These numerical ratios are close. <b>However, identifying the Lefschetz block with the lattice pseudoscalar channel requires an independent parity/charge-conjugation assignment;</b> being an SO(4) scalar alone does not establish that identification.</p>
-<p><a href="scripts/solve_lefschetz.py">Download Lefschetz solver</a> · <a href="scalar_lefschetz_results.csv">Lefschetz calculation CSV</a></p>
+<section class="card" id="method"><h2>Which operator is being diagonalized?</h2><div class="cols"><div><h3>Primitive-scalar radial reduction</h3><p>The constrained singlet is parameterized by one radial function <i>v(τ)</i>, with the second component fixed by the ∂-closedness condition.</p><div class="math">\[q[v]=\cosh(\tau)\,v+\frac12\sinh(\tau)\,v'\]</div><div class="math">\[D_Pv=v''+4\coth(\tau)\,v'+4v\]</div><p>Manuscript Chapters 2–3, especially Eqs. (2.4)–(2.9) and (3.2)–(3.8).</p></div><div><h3>One-sided variational eigenproblem</h3><div class="math">\[c^{2}[v]=\frac{\frac14\int_0^\infty p(\tau)\sinh^{2}(\tau)\,|D_Pv|^{2}\,d\tau}{\int_0^\infty W(\tau)\bigl(|v|^{2}+2|q[v]|^{2}\bigr)\,d\tau}\]</div><div class="math">\[\begin{aligned}p(\tau)&=(\sinh 2\tau-2\tau)^{2/3},\\ W(\tau)&=\sinh^{2}(\tau)\frac{h(\tau)}{h(0)}\end{aligned}\]</div><p>The weight follows \(-\frac{d}{d\tau}(p(\tau)h'(\tau))=S(u(\tau))\), with regularity at \(\tau=0\) and decay at infinity.</p></div></div><p class="small"><b>Zero mode:</b> the analytic A-period zero mode has D<sub>P</sub>v<sub>A</sub> = 0 and is excluded by fixing the A-period. With finite-radius numerical boundary conditions it appears as a small near-zero eigenvalue, not as a physical glueball state.</p></section>
+<section class="card" id="lefschetz">
+  <div class="heading">
+    <div><h2>Lefschetz tower — \(0^{-+}\) glueballs</h2><p class="small">A second, distinct scalar-singlet block; interpreted here as the pseudoscalar \(0^{-+}\) family.</p></div>
+    <span class="tag">Manuscript Chapters 4–5</span>
+  </div>
+  <p><b>State assignment in the manuscript:</b> The primitive sector represents \(0^{++}\), while the Lefschetz sector represents \(0^{-+}\). The latter is governed by its own Sturm–Liouville problem, not by the primitive radial operator. This is the assignment used for the comparisons below.</p>
+  <div class="math">\[
+  \begin{aligned}
+  D_Lf&=f'+\coth(\tau)f,\\
+  Q_L[f]&=\frac12\int_0^\infty p\left(|D_Lf|^2+\frac12\left(\frac{p'}p\right)^2|f|^2\right)d\tau,\\
+  N_L[f]&=\int_0^\infty W(\tau)|f|^2\,d\tau,\qquad c_n^2=\frac{Q_L[f_n]}{N_L[f_n]}.
+  \end{aligned}
+  \]</div>
+  <div class="controls" role="group" aria-label="Lefschetz tower chart controls">
+    <button class="ctrl" id="lefMassToggle" aria-pressed="true" type="button">Mass ratios \(M_n/M_0\)</button>
+    <button class="ctrl" id="lefSquaredToggle" aria-pressed="false" type="button">Squared mass ratios \(M_n^2/M_0^2\)</button>
+    <label class="checkbox"><input id="lefLatticeToggle" type="checkbox" checked> Show lattice benchmark (first two levels)</label>
+  </div>
+  <div class="chart-holder"><svg id="lefschetzPlot" viewBox="0 0 950 385" role="img" aria-label="Interactive Lefschetz 0-minus-plus radial tower compared to the first two continuum large-N lattice pseudoscalar levels"></svg></div>
+  <div class="legend"><span><i class="swatch" style="background:#147986"></i>Lefschetz \(0^{-+}\) — manuscript</span><span><i class="swatch" style="background:#c39444"></i>Lattice \(0^{-+}\) — Athenodorou–Teper</span></div>
+  <p class="chart-note">The spacing of points on the horizontal axis denotes radial level, not physical momentum. Click a teal point or choose a mode below to inspect its values.</p>
+  <div class="inline-control"><label for="lefModeSelect"><b>Inspect mode:</b></label><select id="lefModeSelect"><option value="0">Ground state n = 0</option><option value="1">First radial excitation n = 1</option><option value="2">Second radial excitation n = 2</option><option value="3">Third radial excitation n = 3</option><option value="4">Fourth radial excitation n = 4</option></select></div>
+  <div class="selected-mode" id="lefModeDetails" aria-live="polite"></div>
+  <div class="scroll" style="margin-top:20px"><table><thead><tr><th>\(0^{-+}\) mode</th><th>Manuscript \(c_n^2\)</th><th>Mass \(M_n/M_0\)</th><th>Independent check \(c_n^2\)</th><th>Lattice \(M_n/M_0\)</th></tr></thead><tbody id="lefRows"></tbody></table></div>
+  <p class="footnotes">The lattice ground and first-excited \(0^{-+}\) masses are \(4.711(26)\) and \(7.050(68)\) in units of \(\sqrt{\sigma}\), respectively. Other lattice states are not assigned to the higher Lefschetz modes here. Table 38, Athenodorou &amp; Teper (2021).</p>
+  <div class="notice"><b>Comparison beyond the ground state:</b> the predicted first Lefschetz excitation has \(M_1/M_0\approx1.335\), while the cited lattice \(0^{-+}\) first-excitation ratio is \(7.050/4.711\approx1.497\). This difference is shown rather than hidden by the ground-state agreement.</div>
+  <p><a href="scripts/solve_lefschetz.py">Download the Lefschetz solver</a> · <a href="scalar_lefschetz_results.csv">Lefschetz numerical results (CSV)</a></p>
+</section>
+<section class="card" id="ratio">
+  <div class="heading"><div><h2>Ground-state ratio: \(M_{0^{-+}}/M_{0^{++}}\)</h2><p class="small">Lefschetz pseudoscalar ground state relative to the primitive scalar ground state.</p></div><span class="tag">Direct cross-channel test</span></div>
+  <p><b>The state assignment is explicit:</b> in this work the Lefschetz ground mode is the \(0^{-+}\) glueball, while the primitive ground mode is the \(0^{++}\) glueball. Using their reported squared eigenvalues gives</p>
+  <div class="ratio-feature">
+    <div class="math">\[\frac{M_{0^{-+}}}{M_{0^{++}}}=\sqrt{\frac{c_{L,0}^{\,2}}{c_{P,0}^{\,2}}}=\sqrt{\frac{0.9981}{0.4220071}}\]</div>
+    <strong>1.538</strong><p>Master-field ground-state mass ratio</p>
+  </div>
+  <div class="compare-strip">
+    <div class="compare-item"><small>Master-field prediction</small><strong>1.538</strong><p>\(\sqrt{0.9981/0.4220071}\)</p></div>
+    <div class="compare-item"><small>Large-\(N\) lattice</small><strong>1.534 ± 0.011</strong><p>\(4.711(26)/3.072(14)\), approximate propagated error</p></div>
+  </div>
+  <div class="inline-control"><button id="ratioZoom" class="ctrl" aria-pressed="true" type="button">Zoomed comparison</button><button id="ratioZero" class="ctrl" aria-pressed="false" type="button">Zero-baseline comparison</button></div>
+  <div class="chart-holder" style="min-height:265px"><svg id="ratioPlot" viewBox="0 0 950 285" role="img" aria-label="Ground-state pseudoscalar-to-scalar mass ratio: master-field 1.538 and continuum large-N lattice 1.534 with uncertainty 0.011"></svg></div>
+  <p class="chart-note">The lattice marker includes an approximate 1σ uncertainty interval. The zoomed view makes the difference visible; use the zero-baseline view to judge its actual size.</p>
+  <div class="notice" style="margin-bottom:0"><b>Numerical comparison:</b> the master-field value exceeds the lattice central value by about \(0.0044\), or \(0.29\%\). It lies within the quoted lattice uncertainty. The agreement supports investigating the proposed channel identification, but cannot by itself establish it.</div>
 </section>
 <section class="card" id="reproduce"><div class="heading"><h2>Run the numerical calculation</h2><a class="btn" style="background:#174c64;color:white;border-color:#174c64" href="scripts/solve_primitive.py">Download Python script</a></div><p>The script constructs the radial RG source, integrates the Stenzel weight, assembles the manuscript's quadratic forms using cubic B-splines and Gaussian quadrature, and solves the generalized eigenvalue problem. It does not just read back the table above.</p><div class="code">python -m pip install -r requirements.txt<br>python scripts/solve_primitive.py --tau-max 27 --intervals 220 --csv scalar_galerkin_results.csv<br>python scripts/solve_lefschetz.py --tau-max 16 --intervals 150 --csv scalar_lefschetz_results.csv<br>python scripts/plot_comparison.py --out scalar_spectrum_comparison.png</div><p class="small">A test run at τ<sub>max</sub> = 27 with 220 spline intervals gave h(0) = 0.134078555 and physical squared eigenvalues ≈ 0.422223, 1.035770, 1.874805, 2.936319, 4.219148, 5.722961. These are numerical approximations. Increase τ<sub>max</sub> and the spline resolution to test convergence. The near-zero finite-domain mode must be excluded.</p><p><a href="scalar_galerkin_results.csv">Primitive CSV</a> · <a href="scalar_lefschetz_results.csv">Lefschetz CSV</a> · <a href="scripts/plot_comparison.py">Plotting script</a> · <a href="requirements.txt">Python dependencies</a> · <a href="scalar_spectrum_comparison.png">Comparison PNG</a></p></section>
 <section class="card"><h2>Sources and scope</h2><div class="source"><p><b>Model:</b> J. Hristov, <em>Existence and Mass Gap in Planar SU(N) Yang–Mills Theory on S³ × ℝ and ℝ⁴</em>, research manuscript, Chapters 2–5. <a href="https://doi.org/10.5281/zenodo.23601485">DOI: 10.5281/zenodo.23601485</a>.</p><p><b>Lattice:</b> A. Athenodorou and M. Teper, “SU(N) gauge theories in 3+1 dimensions: glueball spectrum, string tensions and topology,” <em>JHEP</em> 12 (2021) 082. <a href="https://doi.org/10.1007/JHEP12(2021)082">Publication DOI</a>.</p></div><p class="small">The scalar singlet in the geometric construction is a symmetry sector. Matching its complete radial tower with lattice spin/parity/charge-conjugation assignments is a physical identification to be tested, not a property of the eigenvalue problem alone.</p></section>
@@ -63,5 +119,42 @@ function el(type,attrs,parent=svg){const n=document.createElementNS('http://www.
 function draw(){svg.replaceChildren();const left=69,right=922,top=22,bottom=323;const max=squared?14.4:3.85;const xx=i=>left+75+i*141,yy=v=>bottom-(v/max)*(bottom-top);for(let i=0;i<=4;i++){const v=squared?i*3.5:i*0.9;const y=yy(v);el('line',{x1:left,y1:y,x2:right,y2:y,stroke:'#dce6e8','stroke-width':1});label(left-12,y+4,v.toFixed(1),{'text-anchor':'end'})}el('line',{x1:left,y1:top,x2:left,y2:bottom,stroke:'#859aa3'});el('line',{x1:left,y1:bottom,x2:right,y2:bottom,stroke:'#859aa3'});for(let i=0;i<cs.length;i++){let x=xx(i),v=squared?cs[i]/cs[0]:rel[i];el('line',{x1:x,y1:bottom,x2:x,y2:yy(v),stroke:'#b7dcd9','stroke-width':6,'stroke-linecap':'round'});el('circle',{cx:x,cy:yy(v),r:6,fill:'#147986',stroke:'#fff','stroke-width':1.5});label(x,344,`n=${i}`,{'text-anchor':'middle'});label(x,yy(v)-14,v.toFixed(3),{'text-anchor':'middle',class:'titletext'})}if(showLattice.checked){for(let i=0;i<2;i++){const x=xx(i)+23;const v=squared?latMass[i]**2:latMass[i];let sigma=squared?2*latMass[i]*latErr[i]:latErr[i];if(i){el('line',{x1:x,y1:yy(v-sigma),x2:x,y2:yy(v+sigma),stroke:'#c39444','stroke-width':2});for(const z of [v-sigma,v+sigma])el('line',{x1:x-7,y1:yy(z),x2:x+7,y2:yy(z),stroke:'#c39444','stroke-width':2});}el('rect',{x:x-6,y:yy(v)-6,width:12,height:12,rx:2,fill:'#c39444'});label(x+9,yy(v)+20,(i===0?'lattice 1.000':`lattice ${v.toFixed(3)}`),{fill:'#9b722a'})}}label(30,16,squared?'M²/M₀²':'M/M₀',{class:'titletext'});label(500,378,'Scalar radial level n',{'text-anchor':'middle'});
 const rows=document.getElementById('rows');rows.replaceChildren();for(let i=0;i<cs.length;i++){const tr=document.createElement('tr');const values=[`n = ${i}`,cs[i].toFixed(7),rel[i].toFixed(4),i<2?`${latMass[i].toFixed(4)}${i? ' ± '+latErr[i].toFixed(4):''}`:'—',i===1?(rel[i]-latMass[i]).toFixed(4):'—'];for(const v of values){const td=document.createElement('td');td.textContent=v;tr.appendChild(td)}rows.appendChild(tr)}}
 function setSquare(v){squared=v;squareButton.setAttribute('aria-pressed',String(v));massButton.setAttribute('aria-pressed',String(!v));draw()};massButton.addEventListener('click',()=>setSquare(false));squareButton.addEventListener('click',()=>setSquare(true));showLattice.addEventListener('change',draw);draw();})();
+</script>
+<script>
+(()=>{'use strict';
+ const lef=[0.9981,1.7792,2.7771,3.9935,5.4302];
+ const checked=[0.998088,1.778989,2.776341,3.991067,5.423880];
+ const lat=[4.711,7.050], latSigma=[0.026,0.068];
+ const latRatios=[1,lat[1]/lat[0]];
+ const latRatioErr=[0,latRatios[1]*Math.hypot(latSigma[0]/lat[0],latSigma[1]/lat[1])];
+ const ratios=lef.map(v=>Math.sqrt(v/lef[0]));
+ let squared=false, ratioZoomed=true;
+ const lefSVG=document.getElementById('lefschetzPlot'), ratioSVG=document.getElementById('ratioPlot');
+ const ns='http://www.w3.org/2000/svg';
+ function e(svg,name,attrs={},title){const x=document.createElementNS(ns,name);for(const [k,v] of Object.entries(attrs))x.setAttribute(k,String(v));if(title){const t=document.createElementNS(ns,'title');t.textContent=title;x.appendChild(t)}svg.appendChild(x);return x}
+ function txt(svg,x,y,t,attrs={}){const n=e(svg,'text',{x,y,...attrs});n.textContent=t;return n}
+ const lefMass=document.getElementById('lefMassToggle'),lefSq=document.getElementById('lefSquaredToggle'),lefLat=document.getElementById('lefLatticeToggle'),lefSelect=document.getElementById('lefModeSelect'),lefDetails=document.getElementById('lefModeDetails');
+ function setMode(i){lefSelect.value=String(i);const lattice=i<2?(' Lattice ratio: '+latRatios[i].toFixed(3)+(i?' ± '+latRatioErr[i].toFixed(3):'')+'.'): ' No higher lattice mode assignment is made.';lefDetails.textContent='Lefschetz 0−+ · mode n = '+i+' · c² = '+lef[i].toFixed(4)+' · Mₙ/M₀ = '+ratios[i].toFixed(3)+' · independent numerical c² ≈ '+checked[i].toFixed(6)+'.'+lattice;drawLef()}
+ function drawLef(){lefSVG.replaceChildren();const left=74,right=917,top=26,bottom=320,max=squared?6.3:2.65;const yy=v=>bottom-(v/max)*(bottom-top),xx=i=>left+104+i*175;
+ for(let i=0;i<=5;i++){let v=i*max/5,y=yy(v);e(lefSVG,'line',{x1:left,y1:y,x2:right,y2:y,stroke:'#dce6e8'});txt(lefSVG,left-12,y+5,v.toFixed(1),{'text-anchor':'end'})}
+ e(lefSVG,'line',{x1:left,y1:top,x2:left,y2:bottom,stroke:'#8198a2','stroke-width':1.5});e(lefSVG,'line',{x1:left,y1:bottom,x2:right,y2:bottom,stroke:'#8198a2','stroke-width':1.5});
+ for(let i=0;i<lef.length;i++){const v=squared?lef[i]/lef[0]:ratios[i],x=xx(i),y=yy(v);e(lefSVG,'line',{x1:x,y1:bottom,x2:x,y2:y,stroke:'#b3dedc','stroke-width':7,'stroke-linecap':'round'});const selected=Number(lefSelect.value)===i;const c=e(lefSVG,'circle',{cx:x,cy:y,r:selected?9:7,fill:'#147986',stroke:selected?'#e1ae53':'white','stroke-width':selected?3:2,role:'button','aria-label':'Inspect Lefschetz mode '+i,tabindex:0},'Mode '+i+'; c² '+lef[i]+'; ratio '+ratios[i].toFixed(3));c.style.cursor='pointer';c.addEventListener('click',()=>setMode(i));c.addEventListener('keydown',ev=>{if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();setMode(i)}});txt(lefSVG,x,345,'n='+i,{'text-anchor':'middle'});txt(lefSVG,x,y-16,v.toFixed(3),{'text-anchor':'middle',class:'charttitle'})}
+ if(lefLat.checked){for(let i=0;i<2;i++){let x=xx(i)+29,v=squared?latRatios[i]**2:latRatios[i],sig=i?(squared?2*latRatios[i]*latRatioErr[i]:latRatioErr[i]):0,y=yy(v);if(sig){e(lefSVG,'line',{x1:x,y1:yy(v-sig),x2:x,y2:yy(v+sig),stroke:'#b48739','stroke-width':2});for(let z of [v-sig,v+sig])e(lefSVG,'line',{x1:x-7,y1:yy(z),x2:x+7,y2:yy(z),stroke:'#b48739','stroke-width':2})}e(lefSVG,'rect',{x:x-6,y:y-6,width:12,height:12,rx:2,fill:'#c39444'},'Lattice 0−+ mode '+i);txt(lefSVG,x+10,y+19,'lattice '+v.toFixed(3))}}
+ txt(lefSVG,24,16,squared?'M²/M₀²':'M/M₀',{class:'charttitle'});txt(lefSVG,495,376,'Lefschetz radial level n',{'text-anchor':'middle'});
+ }
+ function fillLefRows(){const rows=document.getElementById('lefRows');rows.replaceChildren();for(let i=0;i<lef.length;i++){const tr=document.createElement('tr');const values=[String(i),lef[i].toFixed(4),ratios[i].toFixed(3),checked[i].toFixed(6),i<2?(latRatios[i].toFixed(3)+(i?' ± '+latRatioErr[i].toFixed(3):'')):'—'];for(const v of values){const td=document.createElement('td');td.textContent=v;tr.appendChild(td)}rows.appendChild(tr)}}
+ lefMass.addEventListener('click',()=>{squared=false;lefMass.setAttribute('aria-pressed','true');lefSq.setAttribute('aria-pressed','false');drawLef()});
+ lefSq.addEventListener('click',()=>{squared=true;lefMass.setAttribute('aria-pressed','false');lefSq.setAttribute('aria-pressed','true');drawLef()});
+ lefLat.addEventListener('change',drawLef);lefSelect.addEventListener('change',()=>setMode(Number(lefSelect.value)));fillLefRows();setMode(0);
+ const pred=Math.sqrt(0.9981/0.4220071),latt=4.711/3.072,lattErr=latt*Math.hypot(.026/4.711,.014/3.072);
+ function drawRatio(){ratioSVG.replaceChildren();const left=90,right=895,top=30,bottom=224,min=ratioZoomed?1.47:0,max=ratioZoomed?1.59:1.8,yy=v=>bottom-(v-min)/(max-min)*(bottom-top);
+ const tickN=ratioZoomed?6:6;for(let i=0;i<=tickN;i++){const v=min+i*(max-min)/tickN,y=yy(v);e(ratioSVG,'line',{x1:left,y1:y,x2:right,y2:y,stroke:'#e0e9ea'});txt(ratioSVG,left-12,y+5,v.toFixed(ratioZoomed?2:1),{'text-anchor':'end'})}
+ e(ratioSVG,'line',{x1:left,y1:top,x2:left,y2:bottom,stroke:'#8398a3'});e(ratioSVG,'line',{x1:left,y1:bottom,x2:right,y2:bottom,stroke:'#8398a3'});
+ const mp=330,lp=680;
+ for(const [x,v,color,label] of [[mp,pred,'#147986','Master field'],[lp,latt,'#c39444','Large-N lattice']]){e(ratioSVG,'line',{x1:x,y1:bottom,x2:x,y2:yy(v),stroke:color,'stroke-width':36,opacity:.87});e(ratioSVG,'circle',{cx:x,cy:yy(v),r:6,fill:color,stroke:'white','stroke-width':1.5});txt(ratioSVG,x,yy(v)-15,v.toFixed(3),{'text-anchor':'middle',class:'charttitle'});txt(ratioSVG,x,251,label,{'text-anchor':'middle'})}
+ const ylo=yy(latt-lattErr),yhi=yy(latt+lattErr);e(ratioSVG,'line',{x1:lp,y1:ylo,x2:lp,y2:yhi,stroke:'#4e5362','stroke-width':3});for(const y of [ylo,yhi])e(ratioSVG,'line',{x1:lp-14,y1:y,x2:lp+14,y2:y,stroke:'#4e5362','stroke-width':3});txt(ratioSVG,lp+21,yy(latt)+5,'± '+lattErr.toFixed(3));txt(ratioSVG,30,18,'M(0−+)/M(0++)',{class:'charttitle'});txt(ratioSVG,490,278,ratioZoomed?'Zoomed scale':'Zero baseline',{'text-anchor':'middle'});
+ }
+ const zoom=document.getElementById('ratioZoom'),zero=document.getElementById('ratioZero');function setZoom(v){ratioZoomed=v;zoom.setAttribute('aria-pressed',String(v));zero.setAttribute('aria-pressed',String(!v));drawRatio()}zoom.addEventListener('click',()=>setZoom(true));zero.addEventListener('click',()=>setZoom(false));drawRatio();
+})();
 </script>
 </body></html>
