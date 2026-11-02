@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Interactive primitive 0++ and Lefschetz 0-+ glueball spectra, numerical reproductions, and comparison to continuum large-N lattice Yang–Mills, with reproducible Python scripts.">
-<meta name="citation_doi" content="10.5281/zenodo.23601485">
-<title>Scalar Glueball Spectra: 0++ & 0−+ | Yang–Mills Master Field</title>
+<meta name="description" content="Interactive scalar and pseudoscalar glueball spectra: primitive 0++ and Lefschetz 0−+ sectors, mass-ratio comparisons with large-N lattice data and Python solvers.">
+<title>Glueball Spectrum: 0++ and 0−+ | Large-N Yang–Mills</title>
 <style>
 :root{--navy:#153449;--ink:#203544;--mute:#59707a;--teal:#15727d;--gold:#bc9251;--border:#dbe5e7;--paper:#fff;--bg:#f8faf9;--pale:#edf5f5}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 system-ui,-apple-system,'Segoe UI',sans-serif}a{color:var(--teal);text-underline-offset:3px}
@@ -50,9 +49,16 @@ window.MathJax = {
 </script>
 <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 
+<link rel="canonical" href="https://juliushristov.github.io/spectrum.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Planar Yang–Mills Master Field">
+<meta property="og:title" content="Glueball Spectrum: 0++ and 0−+ | Large-N Yang–Mills">
+<meta property="og:description" content="Interactive scalar and pseudoscalar glueball spectra: primitive 0++ and Lefschetz 0−+ sectors, mass-ratio comparisons with large-N lattice data and Python solvers.">
+<meta property="og:url" content="https://juliushristov.github.io/spectrum.html">
+<meta name="twitter:card" content="summary">
 </head>
 <body>
-<div class="bar"><div class="wrap top"><a class="brand" href="index.html">Planar Yang–Mills Master Field</a><nav class="nav"><a href="index.html">Home</a><a href="roadmap.html">Proof roadmap</a><a href="spectrum.html" aria-current="page">Scalar spectrum</a><a href="manuscript.pdf">Manuscript</a></nav></div></div>
+<div class="bar"><div class="wrap top"><a class="brand" href="index.html">Planar Yang–Mills Master Field</a><nav class="nav"><a href="index.html">Home</a><a href="paper.html">Paper & abstract</a><a href="roadmap.html">Proof roadmap</a><a href="spectrum.html" aria-current="page">Scalar spectrum</a><a href="manuscript.pdf">Manuscript</a></nav></div></div>
 <header class="hero"><div class="wrap"><div class="eyebrow">Research calculations · Primitive 0<sup>++</sup> and Lefschetz 0<sup>−+</sup> singlets</div><h1>Scalar and pseudoscalar glueball spectra</h1><p>Interactive primitive and Lefschetz spectral towers from the constrained Dolbeault master-field construction, compared with continuum large-<i>N</i> lattice Yang–Mills data.</p><div class="pills"><a class="btn primary" href="scripts/solve_primitive.py">View numerical solver</a><a class="btn" href="scalar_spectrum_comparison.png">View static figure</a><a class="btn" href="https://doi.org/10.5281/zenodo.23601485">Manuscript DOI</a></div></div></header>
 <main class="wrap">
 <div class="notice"><b>Identification adopted in this work:</b> The <b>primitive scalar-singlet tower is assigned to the \(0^{++}\) glueball sector</b>, and the <b>Lefschetz scalar-singlet tower is assigned to the \(0^{-+}\) glueball sector</b>. This is the physical interpretation proposed in the manuscript; the full \(J^{PC}\) assignment requires more than \(SO(4)\) singlet symmetry alone. The manuscript has not undergone external peer review. Lattice comparisons test the proposal but do not establish the collective-field identification.</div>
