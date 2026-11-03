@@ -1,0 +1,82 @@
+#!/usr/bin/env python3
+"""Apply a conservative Chapter 18 update to JuliusHristov.github.io/roadmap.html.
+Run inside the repository: python extend_roadmap_ch18.py
+"""
+from pathlib import Path
+import sys
+p = Path(sys.argv[1]) if len(sys.argv)>1 else Path('roadmap.html')
+s = p.read_text(encoding='utf-8')
+if "id:'uvrecovery'" in s:
+    raise SystemExit('Chapter 18 node already present; no changes made.')
+
+def replace_once(old,new):
+    global s
+    n=s.count(old)
+    if n!=1: raise SystemExit(f'Expected one match, found {n}: {old[:100]!r}; original unchanged')
+    s=s.replace(old,new,1)
+
+replace_once('grid-template-columns:repeat(4,minmax(220px,1fr))','grid-template-columns:repeat(5,minmax(220px,1fr))')
+replace_once("{title:'04 / Flat space & reconstruction',small:'Decompactification and final claims',ids:['flat','os','main']}",
+             "{title:'04 / Flat space & reconstruction',small:'Decompactification and final claims',ids:['flat','os','main']},\n  {title:'05 / Ultraviolet recovery',small:'Microscopic consistency of the collective map',ids:['uvrecovery']}")
+node = """{id:'uvrecovery',category:'foundation',chap:'Chapter 18',name:'Ultraviolet Yang–Mills recovery',sub:'Inverse GV polarization, color algebra, running coupling and transverse kinetic operator',kind:'Conditional UV consistency proposition',deps:['fuzzy','periods','complex','collective','measure','strings'],description:'Studies the opposite limit RΛYM → 0, not the R → ∞ decompactification of Chapter 15. At a fixed ultraviolet RG scale, the conifold approaches its asymptotic T¹,¹ link; the RG/color fibre restricts to an S² Hamiltonian color algebra. The finite-N fuzzy-star commutator and the planar Poisson bracket provide the microscopic color structures. Under the assumed physically normalized inverse Gopakumar–Vafa polarization, the Dolbeault differential and nonlinear curvature recover the spatial de Rham differential and Yang–Mills field strength. The Stenzel Riesz response supplies the logarithmic inverse coupling and the inverse Hamiltonian polarization restores the color-independent Hilbert–Schmidt pairing. The resulting physical transverse operator is d†d on S³ tensored with the identity in color. Proposition 18.1 is conditional on the required polarization and transport identities; source-level covariance equivalence additionally requires compatibility with the nuclear test-function spaces.',formula:'KUV = d†S³ dS³ ⊗ Icol;    λ⁻¹(μ) ∼ b₀ log(μ/ΛYM)',provides:['Recovery of the microscopic gauge algebra and curvature from the collective UV boundary.','A leading logarithmic inverse-coupling response and color-independent Hilbert–Schmidt metric.','The transverse kinetic operator KUV = d†d ⊗ Icol and lowest round-S³ eigenvalue 4/R².','An ultraviolet consistency test connecting the collective covariance with Chapter 12, subject to source-space compatibility.'],checks:['Which UV inverse-GV intertwining and domain identities are established, and which are assumed in Proposition 18.1?','How does the fixed-τ tangential CR operator reduce to the microscopic dS³ rather than an extra color-derivative Laplacian?','Does the inverse Hamiltonian Riesz pairing yield the same normalization for all color harmonics?','Is the covariance intertwiner continuous on the nuclear source/test-function spaces?','Do not confuse the RΛYM → 0 UV limit with Chapter 15’s R → ∞ endpoint.'],refs:'§§18.1–18.10; Proposition 18.1'},
+"""
+replace_once('];\nconst formulaTeX={',node+'];\nconst formulaTeX={')
+replace_once('  main:String.raw`\\operatorname{spec}(H)\\subset\\{0\\}\\cup[M_{\\mathrm{gap}},\\infty),\\qquad M_{\\mathrm{gap}}>0`',
+             '  main:String.raw`\\operatorname{spec}(H)\\subset\\{0\\}\\cup[M_{\\mathrm{gap}},\\infty),\\qquad M_{\\mathrm{gap}}>0`,\n  uvrecovery:String.raw`\\begin{aligned}K_{\\mathrm{UV}}&=d_{S^3}^{\\dagger}d_{S^3}\\otimes I_{\\mathrm{col}},\\qquad \\lambda_0(K_{\\mathrm{UV}})=\\frac4{R^2},\\\\ \\lambda^{-1}(\\mu)&\\sim b_0\\log(\\mu/\\Lambda_{\\mathrm{YM}})\\end{aligned}`')
+replace_once('13 steps</span>','14 steps</span>')
+replace_once('Try: Riesz, Gaussian, ISO(3), conifold, Osterwalder…','Try: Riesz, UV recovery, Gaussian, ISO(3), conifold…')
+replace_once('From gauge configurations to the claimed mass gap','From gauge configurations to the mass gap and UV recovery')
+# Delete the obsolete version note, including its heading and enclosing card.
+# Parse HTML using Python's standard library so no external dependency is required.
+from html.parser import HTMLParser
+
+class ElementRanges(HTMLParser):
+    def __init__(self, source):
+        super().__init__(convert_charrefs=True)
+        self.source = source
+        self.starts = []
+        self.elements = []
+        self.stack = []
+        self.lines = [0]
+        for i, char in enumerate(source):
+            if char == "\n": self.lines.append(i+1)
+    def offset(self):
+        line, col = self.getpos()
+        return self.lines[line-1] + col
+    def handle_starttag(self, tag, attrs):
+        pos = self.offset()
+        if tag in ('br','hr','img','meta','input','link','source','wbr','area','embed'):
+            return
+        el = dict(tag=tag, start=pos, end=None, parent=self.stack[-1] if self.stack else None)
+        self.elements.append(el)
+        self.stack.append(el)
+    def handle_startendtag(self, tag, attrs): pass
+    def handle_endtag(self, tag):
+        for i in range(len(self.stack)-1,-1,-1):
+            if self.stack[i]['tag'] == tag:
+                end = self.source.find('>', self.offset())+1
+                for el in self.stack[i:]: el['end'] = end
+                del self.stack[i:]
+                break
+
+heading = 'A note about the latest version'
+paragraph = 'The draft used to map chapters had Chapters 1–17.'
+if s.count(heading) != 1 or s.count(paragraph) != 1:
+    raise SystemExit('Version note missing or duplicated; original unchanged')
+parser = ElementRanges(s)
+parser.feed(s)
+hpos, ppos = s.index(heading), s.index(paragraph)
+candidates = [el for el in parser.elements if el['end'] and el['start'] <= hpos < el['end'] and el['start'] <= ppos < el['end'] and el['tag'] in ('aside','section','div','article')]
+# Remove the tightest containing note card, never a large page section.
+candidates.sort(key=lambda el: el['end']-el['start'])
+if not candidates or candidates[0]['end']-candidates[0]['start'] > 3000:
+    raise SystemExit('Could not safely isolate the version-note card; original unchanged')
+card = candidates[0]
+s = s[:card['start']] + s[card['end']:]
+
+replace_once('The string interpretation is a separate layer, not a prerequisite for the spectral proof.',
+             'The string interpretation is a separate layer, not a prerequisite for the spectral proof. Chapter 18 uses a physically normalized inverse GV polarization and makes a conditional UV recovery statement, with further covariance/test-space compatibility needed for the generating-functional identification.')
+backup=p.with_suffix('.html.before-ch18')
+backup.write_text(p.read_text(encoding='utf-8'),encoding='utf-8')
+p.write_text(s,encoding='utf-8')
+print('Updated:',p,'; backup:',backup)
